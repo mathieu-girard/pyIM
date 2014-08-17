@@ -159,7 +159,7 @@ class IM_Frame:
             This function has to transform raw text to IM_Frame
             :returns: True if transformed correctly, False if not
         """            
-        sep = '\t'
+        sep = ' '
         frameOffset = 0
         type_index = 0
 
