@@ -16,4 +16,4 @@ Usage:
 
 License:
 - This software is under the GPL license. Look at: http://www.gnu.org/licenses/gpl-3.0.txt
-- pyIM, Python and third-party libraries *are not* linked in any case to the company KEYENCE.
+- pyIM, Python and third-party libraries *are not* linked in any case to KEYENCE.
