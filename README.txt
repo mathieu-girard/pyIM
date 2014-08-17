@@ -15,5 +15,5 @@ Usage:
 - In a shell, python pyIM com_port baud_rate check_checksum e.g.: python com3 9600 1
 
 License:
-- This software is under the GPL license. Please look at: http://www.gnu.org/licenses/gpl-3.0.txt
-- pyIM, Python and third-party libraries *are not* linked in any case to KEYENCE.
+- This software is under the GPL license. Look at: http://www.gnu.org/licenses/gpl-3.0.txt
+- pyIM, Python and third-party libraries *are not* linked in any case to the company KEYENCE.
