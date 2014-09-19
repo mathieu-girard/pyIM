@@ -17,7 +17,7 @@ import pylab
     
     Script for displaying real time graphs of IM measurement
 
-    :Date: 2014-08-12
+    :Date: 2014-09-19
     :Version: 1.0
     :Authors: Mathieu Girard
 
@@ -380,27 +380,22 @@ class IM_Display:
                 ax = ax_left
                 ypos = n_line_screen-i-2
                 labels_left[ypos] = str('%s (%s)%s'%(self.frame.measures[i].measure_name, self.frame.measures[i].measure_unit, measure_type))
+                labels_left[ypos] = str('%.3f%s%s'%(self.frame.measures[i].measure_item, self.frame.measures[i].measure_unit, measure_type))
             else:
                 ax = ax_right
                 ypos = n_line_screen - i + math.ceil(len(self.frame.measures)/2) - 2
                 labels_right[ypos] = str('%s (%s)%s'%(self.frame.measures[i].measure_name, self.frame.measures[i].measure_unit, measure_type))
-                
-
-            # set labels on each ax
-            ax_left.set_yticklabels(labels_left)
-            ax_right.set_yticklabels(labels_right)
 
             # calculation of coefficient for truncated colormap according ratio
             perf = self.frame.measures[i].computePerfMeasure()
-            color_start = 0.5
-            color_end = 0.85           
+            color_start = 0.55
+            color_end = 0.80         
             cmap = plt.get_cmap('jet')
                 
             # update color map according values then plot the image
             new_cmap = truncate_colormap(cmap, color_start, (color_end - color_start) * abs(perf) + color_start)
             ax.imshow(gradient, interpolation='bicubic', aspect='auto', cmap=new_cmap, extent=(0, perf*100, ypos-0.25, ypos+0.25 ))
  
-
             # setup text legend
             maxi = self.frame.measures[i].measure_design + self.frame.measures[i].measure_upper
             mini = self.frame.measures[i].measure_design + self.frame.measures[i].measure_lower
@@ -419,11 +414,18 @@ class IM_Display:
             
             alignment = {'horizontalalignment':'center', 'verticalalignment':'baseline'}
 
-            ax.text(0, ypos, str('%.3f'%self.frame.measures[i].measure_item), color=text_color, fontproperties=font_middle,**alignment)
+            ax.text(0, ypos, str('%s'%self.frame.measures[i].measure_name), color=text_color, fontproperties=font_middle,**alignment)
             ax.text(-100, ypos, str('%.3f'%mini), color='black', fontproperties=font_side,**alignment)
             ax.text(+100, ypos, str('%.3f'%maxi), color='black', fontproperties=font_side,**alignment)
             ax.axhline(linewidth=1, color='black', y=ypos, alpha = 0.05)
 
+        # set labels on each ax
+        ax_left.set_yticklabels(labels_left)
+        ax_right.set_yticklabels(labels_right)
+        
+        xticks = ('-150%', '-100%', '-50%', '0%', '50%', '100%', '150%')
+        ax_left.set_xticklabels(xticks)
+        ax_right.set_xticklabels(xticks)        
             
         # setup cosmetic for both axes
         for ax in [ax_left, ax_right]:  
@@ -443,8 +445,12 @@ class IM_Display:
             # set background color grey shade percentage
             ax.set_axis_bgcolor('0.85')
 
-            # draw center vertical line as visual reference
+            # draw vertical lines as visual reference
+            ax.axvline(linewidth=1, color='black', x=-100, alpha = 0.05)
+            ax.axvline(linewidth=1, color='black', x=-50, alpha = 0.05)
             ax.axvline(linewidth=1, color='black', x=0, alpha = 0.05)
+            ax.axvline(linewidth=1, color='black', x=50, alpha = 0.05)
+            ax.axvline(linewidth=1, color='black', x=100, alpha = 0.05)
         
         # final layout setup and drawing
         plt.tight_layout()
