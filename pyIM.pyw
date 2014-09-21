@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt; plt.rcdefaults()
 from matplotlib.font_manager import FontProperties
 import numpy as np
 import pylab
+import ctypes
 
 """
     pyIM
@@ -17,7 +18,7 @@ import pylab
     
     Script for displaying real time graphs of IM measurement
 
-    :Date: 2014-09-19
+    :Date: 2014-09-21
     :Version: 1.0
     :Authors: Mathieu Girard
 
@@ -67,6 +68,17 @@ import pylab
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
     THE POSSIBILITY OF SUCH DAMAGE.
 """
+
+
+"""
+  Basic function for getting screen information thanks to Windows API
+"""
+def getVirtualScreenSize():
+  user32 = ctypes.windll.user32
+  SM_CXVIRTUALSCREEN = 78
+  SM_CYVIRTUALSCREEN = 79
+  virtualScreenSize = (user32.GetSystemMetrics(SM_CXVIRTUALSCREEN), user32.GetSystemMetrics(SM_CYVIRTUALSCREEN))
+  return virtualScreenSize
 
 class IM_Measure:
     """
@@ -300,9 +312,9 @@ class IM_Display:
             self.fig.canvas.mpl_connect('resize_event', self.resize_display)
             self.fig.canvas.set_window_title('pyIM')
             
-            # window is prefered in maximzed state
-            wm = plt.get_current_fig_manager()
-            wm.window.state('zoomed')
+            # window position is set before state to maximized in update_graph
+            w,h=getVirtualScreenSize()
+            plt.get_current_fig_manager().window.wm_geometry(("+%d+%d"%(w-1,0)))
 
             # create timer for updating display using a rs232 polling callback
             timer = self.fig.canvas.new_timer(interval=250)
@@ -332,6 +344,8 @@ class IM_Display:
             The figure is updated periodically thanks to the timer by this function
             http://matplotlib.org/examples/pylab_examples/gradient_bar.html
         """
+        # window state is updated to maximized for correct drawing
+        plt.get_current_fig_manager().window.state('zoomed')
         
         # start a thread for getting a new frame
         threadSerial = threading.Thread(target=self.get_frame, args=())
@@ -452,7 +466,7 @@ class IM_Display:
             ax.axvline(linewidth=1, color='black', x=50, alpha = 0.05)
             ax.axvline(linewidth=1, color='black', x=100, alpha = 0.05)
         
-        # final layout setup and drawing
+        # final layout setup and drawing        
         plt.tight_layout()
         plt.draw()
 
